@@ -82,7 +82,7 @@
                  (get-system-current-drive system)
                  (get-system-current-path system))))
 
-;; agregar nuevo user (se usa en RF5 add-user)
+;; agregar nuevo user (se usa en RF5 register)
 (define system-add-user
   (lambda (system new-user)
     (make-system (get-system-name system)
@@ -92,6 +92,17 @@
                  (get-system-current-drive system)
                  (get-system-current-path system))))
 
+;;hacer Login
+(define system-make-login
+  (lambda (system new-user)
+    (make-system (get-system-name system)
+                 (get-system-users system)
+                 (get-system-drives system)
+                 (cons new-user (get-system-current-user system))
+                 (get-system-current-drive system)
+                 (get-system-current-path system))))
+
+
 
 ;; RF5. TDA system - register
 
@@ -99,12 +110,27 @@
 ;; Dom: System X
 ;;      username (str)
 ;; Rec: System
-(define add-user
+(define register
   (lambda (system)
     (lambda (username)
       (if (not (exists-system-user? username system)) ;; si usuario no existe, entonces agregar
           (system-add-user system username) ;; retornar sistema
           system)))) ;; si usuario existe, retornar sistema sin cambios
+
+
+
+;; RF5. TDA system - login
+
+;; currificado
+;; Dom: System X
+;;      username (str)
+;; Rec: System
+(define login
+  (lambda (system)
+    (lambda (username)
+      (if (exists-system-user? username system) ;; si usuario no existe,
+          (system-make-login system username) ;; retornar sistema
+          system)))) ;; si usuario existe, agrega
 
 
 
@@ -128,7 +154,14 @@
                             (make-drive letter name capacity))
           system)))) ;;else return system
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Otras funciones
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Otras funciones
 ;;Funcion:
 ;;Descripcion:
 ;;Dom:
@@ -151,6 +184,10 @@
 (define get-drive-letter car)
 (define get-drive-name cadr)
 (define get-drive-capacity caddr)
+
+
+;;;;;;LOGIN
+
 
 
 
