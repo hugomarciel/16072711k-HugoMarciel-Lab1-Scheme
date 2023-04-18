@@ -9,9 +9,9 @@
 ;;TDA SYSTEM
 ;;DOM: nombre (string)
 ;;REC: system 
-;;Representacion name (String) X users (String list) X drives (drive list) X current-user (String) X current-drive (char) X current-path (String)
-(define (system name)
-  (list name '() '() "" #\0 ""))
+;;Representacion name (String) X users (String list) X drives (drive list) X current-user (String) X current-drive (char) X current-path (String) x logged(boolean)
+(define (system name) 
+  (list name '() '() "" #\0 "" 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Constructor :
 ;;Funcion: make-system
@@ -19,8 +19,8 @@
 ;;Dom:
 ;;REC:
 (define make-system
-  (lambda (name users drives current-user current-drive current-path)
-    (list name users drives current-user current-drive current-path)))
+  (lambda (name users drives current-user current-drive current-path logged)
+    (list name users drives current-user current-drive current-path logged)))
 
 
 
@@ -61,7 +61,7 @@
 (define get-system-current-user cadddr) ;System -> String
 (define get-system-current-drive (lambda (system) (car (cdr (cdr (cdr (cdr system))))))) ;System -> char
 (define get-system-current-path (lambda (system) (car (cdr (cdr (cdr (cdr (cdr system)))))))) ;System -> String
-
+(define get-system-logged (lambda (system) (car (cdr (cdr (cdr (cdr (cdr(cdr system))))))))) ;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Modificadores
 ;;Funcion:
@@ -80,7 +80,8 @@
                  (cons new-drive (get-system-drives system))
                  (get-system-current-user system)
                  (get-system-current-drive system)
-                 (get-system-current-path system))))
+                 (get-system-current-path system)
+                 (get-system-logged system))))
 
 ;; agregar nuevo user (se usa en RF5 register)
 (define system-add-user
@@ -90,7 +91,8 @@
                  (get-system-drives system)
                  (get-system-current-user system)
                  (get-system-current-drive system)
-                 (get-system-current-path system))))
+                 (get-system-current-path system)
+                 (get-system-logged system))))
 
 ;;hacer Login
 (define system-make-login
@@ -98,9 +100,21 @@
     (make-system (get-system-name system)
                  (get-system-users system)
                  (get-system-drives system)
-                 (cons new-user (get-system-current-user system))
+                 new-user 
                  (get-system-current-drive system)
-                 (get-system-current-path system))))
+                 (get-system-current-path system)
+                 1)))
+
+;;hacer Logout
+(define system-make-logout
+  (lambda (system)
+    (make-system (get-system-name system)
+                 (get-system-users system)
+                 (get-system-drives system)
+                 ""
+                 (get-system-current-drive system)
+                 (get-system-current-path system)
+                 0)))
 
 
 
@@ -125,12 +139,34 @@
 ;; Dom: System X
 ;;      username (str)
 ;; Rec: System
+;(define login
+;  (lambda (system)
+;    (lambda (username)
+;      (if (exists-system-user? username system) ;; si usuario no existe,
+;          (system-make-login system username) ;; retornar sistema
+ ;         system)))) ;; si usuario existe, agrega
+
 (define login
   (lambda (system)
     (lambda (username)
-      (if (exists-system-user? username system) ;; si usuario no existe,
-          (system-make-login system username) ;; retornar sistema
-          system)))) ;; si usuario existe, agrega
+      (if (exists-system-user? username system)
+          (if (= (get-system-logged system) 0)
+              (system-make-login system username)
+              system)
+          system))))
+
+;(define logout
+;  (lambda (system)
+;          (if (= (get-system-logged system) 1)
+;              (system-make-logout system)
+;              system)
+;          system))
+
+(define logout
+  (lambda (system)
+    (if (= (get-system-logged system) 1)
+        (system-make-logout system)
+        system)))
 
 
 
@@ -139,6 +175,7 @@
 
 (define (run system cmd)
   (cmd system))
+
 
 
 ;; RF4. TDA system - add-drive
@@ -186,7 +223,34 @@
 (define get-drive-capacity caddr)
 
 
-;;;;;;LOGIN
+;;;;;;Switch Drive
+
+(define switch-drive
+  (lambda (system)
+    (lambda (drive)
+    (system-make-switch-drive system drive))))
+
+(define system-make-switch-drive
+  (lambda (system drive)
+           (make-system (get-system-name system)
+                 (get-system-users system)       
+                 (get-system-drives system)
+                 (get-system-current-user system)
+                 drive
+                 drive
+                 (get-system-logged system))))
+
+;(define system-make-logout
+ ; (lambda (system)
+  ;  (make-system (get-system-name system)
+   ;              (get-system-users system)
+    ;             (get-system-drives system)
+     ;            ""
+      ;           (get-system-current-drive system)
+       ;          (get-system-current-path system)
+        ;         0)))
+
+
 
 
 
