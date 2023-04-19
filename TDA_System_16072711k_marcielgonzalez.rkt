@@ -11,7 +11,7 @@
 ;;REC: system 
 ;;Representacion name (String) X users (String list) X drives (drive list) X current-user (String) X current-drive (char) X current-path (String) x logged(boolean)
 (define (system name) 
-  (list name '() '() "" #\0 "" 0))
+  (list name '() '() "" #\0 "" 0 '()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Constructor :
 ;;Funcion: make-system
@@ -19,8 +19,8 @@
 ;;Dom:
 ;;REC:
 (define make-system
-  (lambda (name users drives current-user current-drive current-path logged)
-    (list name users drives current-user current-drive current-path logged)))
+  (lambda (name users drives current-user current-drive current-path logged elementos)
+    (list name users drives current-user current-drive current-path logged elementos)))
 
 
 
@@ -61,7 +61,9 @@
 (define get-system-current-user cadddr) ;System -> String
 (define get-system-current-drive (lambda (system) (car (cdr (cdr (cdr (cdr system))))))) ;System -> char
 (define get-system-current-path (lambda (system) (car (cdr (cdr (cdr (cdr (cdr system)))))))) ;System -> String
-(define get-system-logged (lambda (system) (car (cdr (cdr (cdr (cdr (cdr(cdr system))))))))) ;
+(define get-system-logged (lambda (system) (car (cdr (cdr (cdr (cdr (cdr(cdr system)))))))));
+(define get-system-elementos (lambda (system) (car (cdr (cdr (cdr (cdr (cdr(cdr(cdr system))))))))));
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Modificadores
 ;;Funcion:
@@ -81,7 +83,8 @@
                  (get-system-current-user system)
                  (get-system-current-drive system)
                  (get-system-current-path system)
-                 (get-system-logged system))))
+                 (get-system-logged system)
+                 (get-system-elementos system))))
 
 ;; agregar nuevo user (se usa en RF5 register)
 (define system-add-user
@@ -92,7 +95,8 @@
                  (get-system-current-user system)
                  (get-system-current-drive system)
                  (get-system-current-path system)
-                 (get-system-logged system))))
+                 (get-system-logged system)
+                 (get-system-elementos system))))
 
 ;;hacer Login
 (define system-make-login
@@ -103,7 +107,8 @@
                  new-user 
                  (get-system-current-drive system)
                  (get-system-current-path system)
-                 1)))
+                 1
+                 (get-system-elementos system))))
 
 ;;hacer Logout
 (define system-make-logout
@@ -114,7 +119,8 @@
                  ""
                  (get-system-current-drive system)
                  (get-system-current-path system)
-                 0)))
+                 0
+                 (get-system-elementos system))))
 
 
 
@@ -139,12 +145,6 @@
 ;; Dom: System X
 ;;      username (str)
 ;; Rec: System
-;(define login
-;  (lambda (system)
-;    (lambda (username)
-;      (if (exists-system-user? username system) ;; si usuario no existe,
-;          (system-make-login system username) ;; retornar sistema
- ;         system)))) ;; si usuario existe, agrega
 
 (define login
   (lambda (system)
@@ -155,12 +155,7 @@
               system)
           system))))
 
-;(define logout
-;  (lambda (system)
-;          (if (= (get-system-logged system) 1)
-;              (system-make-logout system)
-;              system)
-;          system))
+
 
 (define logout
   (lambda (system)
@@ -238,19 +233,42 @@
                  (get-system-current-user system)
                  drive
                  drive
-                 (get-system-logged system))))
+                 (get-system-logged system)
+                 (get-system-elementos system))))
 
-;(define system-make-logout
- ; (lambda (system)
-  ;  (make-system (get-system-name system)
-   ;              (get-system-users system)
-    ;             (get-system-drives system)
-     ;            ""
-      ;           (get-system-current-drive system)
-       ;          (get-system-current-path system)
-        ;         0)))
+;;;;;;;;;;Creacion de carpetas
+
+;;;modificador
+(define md
+  (lambda (system)
+    (lambda (folder )
+    (system-make-new-folder system folder))))
+;;;Constructor
+(define system-make-new-folder
+  (lambda (system folder)
+           (make-system (get-system-name system)
+                 (get-system-users system)       
+                 (get-system-drives system)
+                 (get-system-current-user system)
+                 (get-system-current-drive system)
+                 (get-system-current-path system)
+                 (get-system-logged system)
+                 (cons(make-elemento system folder "f")(get-system-elementos system)))))
 
 
+
+
+;;;Constructor de elemento
+;;Dom
+;;REC:Lista de usuario(string) x tipo(string) X currentdrive X currentpath X nombreelemento
+(define make-elemento
+  (lambda (system elemento t)
+  (list (get-system-current-user system)
+        t
+        (get-system-current-drive system)
+        (get-system-current-path system)
+        elemento)))
+ 
 
 
 
