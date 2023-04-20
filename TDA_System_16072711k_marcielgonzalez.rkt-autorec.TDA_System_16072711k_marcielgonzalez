@@ -9,7 +9,7 @@
 ;;TDA SYSTEM
 ;;DOM: nombre (string)
 ;;REC: system 
-;;Representacion name (String) X users (String list) X drives (drive list) X current-user (String) X current-drive (char) X current-path (String) x logged(boolean) x Elementos
+;;Representacion name (String) X users (String list) X drives (drive list) X current-user (String) X current-drive (char) X current-path (String) x logged(boolean)
 (define (system name) 
   (list name '() '() "" #\0 "" 0 '()))
 
@@ -84,8 +84,7 @@
                  (get-system-current-drive system)
                  (get-system-current-path system)
                  (get-system-logged system)
-                 (cons(make-elemento system (car new-drive) "U")(get-system-elementos system)))))
-
+                 (get-system-elementos system))))
 
 ;; agregar nuevo user (se usa en RF5 register)
 (define system-add-user
@@ -244,7 +243,6 @@
   (lambda (system)
     (lambda (folder )
     (system-make-new-folder system folder))))
-
 ;;;Constructor
 (define system-make-new-folder
   (lambda (system folder)
@@ -255,69 +253,26 @@
                  (get-system-current-drive system)
                  (get-system-current-path system)
                  (get-system-logged system)
-                 (cons(make-elemento system folder "D")(get-system-elementos system)))))
+                 (cons(make-elemento system folder "f")(get-system-elementos system)))))
 
 
 
 
 ;;;Constructor de elemento
 ;;Dom
-;;REC:Lista de usuario(string) x tipo(string) X currentdrive X currentpath X nombreelemento X path
+;;REC:Lista de usuario(string) x tipo(string) X currentdrive X currentpath X nombreelemento
 (define make-elemento
   (lambda (system elemento t)
   (list (get-system-current-user system)
         t
         (get-system-current-drive system)
         (get-system-current-path system)
-        elemento
-        (system-make-path (get-system-current-path system) elemento t ))))
+        elemento)))
  
 
 
 
-;;;;;;;;;;;;;;;;;;;;;Funcion CD
-;;
-;;
-;;;
-;(define cd
-;  (lambda (system)
-;     (lambda (func)
-;         (system-make-cd system func))))
 
-;(define system-make-cd
- ; (lambda system func)
-  ;(if(= func "..")
-   ;  ()
-    ; (if    )
-
-;(define system-make-path
- ; (lambda (path elemento)
-  ;  (if (not path "" ))
-   ;    (if (not elemento "" ))
-    ;       (list->string (list (string path) (string elemento )))))
-     ;      (system)
-
-(define system-make-path
-    (lambda (path elemento t)
-      ;(display t)
-      (if(string=? t "U")
-         (string-append path ":" "/" (string elemento) )
-           (if(string=? t "D")
-              ;(list->string (reverse (string->list (string-append elemento ":" "/" (string path )))))
-              (string-append (string path)  ":" "/"elemento)
-              ((string-append (string elemento) ":" "/" path ))))))
-
-     ;    (
-      ;(display elemento)
-      ;(if (string=? (string elemento) "C")
-       ;   (display (string-append (string elemento) ":" "/" path ))
-        ;  (display "no son iguales    "  )))
-        ;(null) )
-
-      ;))
-      
-         
-     
 
 
 
