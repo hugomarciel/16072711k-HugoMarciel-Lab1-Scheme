@@ -11,7 +11,7 @@
 ;;REC: system 
 ;;Representacion name (String) X users (String list) X drives (drive list) X current-user (String) X current-drive (char) X current-path (String) x logged(boolean) x Elementos
 (define (system name) 
-  (list name '() '() "" #\0 "" 0 '()))
+  (list name '() '() "" #\C "C" 0 '()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Constructor :
 ;;Funcion: make-system
@@ -279,16 +279,48 @@
 ;;
 ;;
 ;;;
-;(define cd
-;  (lambda (system)
-;     (lambda (func)
-;         (system-make-cd system func))))
+(define cd
+  (lambda (system)
+     (lambda (func)
+         (system-make-cd system func))))
 
 ;(define system-make-cd
- ; (lambda system func)
-  ;(if(= func "..")
-   ;  ()
-    ; (if    )
+ ;(lambda (system func)
+   ;(display (estamos-en-raiz system))
+  ;(if(string=? func "..")
+   ;  (null)
+    ; (if(string=? func "/")
+     ;   (null)
+      ;  (if(estamos-en-raiz system)
+       ;    (system)
+        ;   (folder-up system)
+           
+       ; )))))
+
+
+
+(define system-make-cd
+  (lambda (system func)
+    (display (estamos-en-raiz system))
+    (if (string=? func "..")
+        (if (estamos-en-raiz system)
+            system
+            (folder-up system))
+        system)))
+;(define system-make-cd
+ ; (lambda (system func)
+  ;  (display (estamos-en-raiz system))
+   ; (if (string=? func "..")
+    ;    (if (estamos-en-raiz system)
+     ;       system
+      ;      (folder-up system)))))
+            
+            
+    ;(if (string=? func "/")
+           ; (null)
+    ;(if (estamos-en-raiz system)
+     ;           system
+      ;          (folder-up system)))))) 
 
 ;(define system-make-path
  ; (lambda (path elemento)
@@ -299,13 +331,13 @@
 
 (define system-make-path
     (lambda (path elemento t)
-      ;(display t)
+      
       (if(string=? t "U")
-         (string-append path ":" "/" (string elemento) )
+         (string-append path ":" "/" (string elemento))
            (if(string=? t "D")
               ;(list->string (reverse (string->list (string-append elemento ":" "/" (string path )))))
-              (string-append (string path)  ":" "/"elemento)
-              ((string-append (string elemento) ":" "/" path ))))))
+              (string-append (string path) ":" "/"elemento)
+              ((string-append path ":" "/" (string elemento) ))))))
 
      ;    (
       ;(display elemento)
@@ -315,6 +347,13 @@
         ;(null) )
 
       ;))
+(define (estamos-en-raiz system)
+    (string=? (string(get-system-current-drive system))(string(get-system-current-path system))))
+
+
+(define (folder-up system)
+  (display(string (get-system-current-path system))))
+  
       
          
      
