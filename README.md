@@ -1,0 +1,2 @@
+# Lab1ParadigmaFuncionalHugoMarciel
+En esterepositorio se encuentra toda la documentacion  y codigo de la realizacion del laboratorio de paradigmas de programacion para la creacion de un sistema de archivos con la utilizacion del paradigma funcional utilizando lenguaje Schemme y Dr Racket. 
